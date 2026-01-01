@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity | PayTransfer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #0070ba;
+            --dark-blue: #003087;
+            --bg-color: #eff2f5;
+            --text-color: #2c2e2f;
+            --success-color: #27ae60;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: var(--dark-blue);
+            color: white;
+            padding: 0 3rem;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-weight: bold;
+            font-size: 1.6rem;
+            font-family: sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+            padding: 8px 12px;
+            border-radius: 20px;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: white;
+            background-color: rgba(255,255,255,0.1);
+            font-weight: bold;
+        }
+
+        .hamburger {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -6px;
+            right: -8px;
+            background-color: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            font-size: 0.65rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--dark-blue);
+        }
+
+        /* Activity Content */
+        .main-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            width: 100%;
+            padding: 0 1.5rem;
+        }
+
+        .search-section {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .search-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 20px 14px 45px;
+            border-radius: 50px;
+            border: 1px solid #dce0e5;
+            font-size: 1rem;
+            outline: none;
+            background: white;
+            transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+
+        .search-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(0, 112, 186, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c7378;
+        }
+
+        .filter-btn {
+            background: white;
+            border: 1px solid #dce0e5;
+            border-radius: 50px;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            background-color: #f5f7fa;
+            border-color: #c0c4c9;
+        }
+
+        .date-header {
+            font-weight: 700;
+            color: #2c2e2f;
+            margin: 1.5rem 0 1rem;
+            font-size: 1.1rem;
+        }
+
+        .activity-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.04);
+            overflow: hidden;
+            border: 1px solid #f0f0f0;
+        }
+
+        .transaction-item {
+            display: flex;
+            align-items: center;
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid #f5f7fa;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .transaction-item:hover {
+            background-color: #fcfcfc;
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .t-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.3rem;
+            border: 1px solid #f0f0f0;
+            background-color: white;
+            color: #2c2e2f;
+        }
+
+        .t-details {
+            flex: 1;
+        }
+
+        .t-name {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 4px;
+            color: #2c2e2f;
+        }
+
+        .t-status {
+            font-size: 0.85rem;
+            color: #6c7378;
+        }
+
+        .t-amount {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .amount-plus { color: var(--success-color); }
+        .amount-minus { color: var(--text-color); }
+
+        /* Bottom Navigation for Mobile */
+        .bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: white;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            justify-content: space-around;
+            padding: 12px 0;
+            z-index: 1000;
+            border-top: 1px solid #eee;
+        }
+
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #6c7378;
+            font-size: 0.7rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .bottom-nav-item i {
+            font-size: 1.4rem;
+            margin-bottom: 4px;
+        }
+
+        .bottom-nav-item.active {
+            color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .navbar { padding: 0 1.5rem; height: 60px; }
+            .hamburger { display: none !important; }
+            .nav-links { display: none !important; }
+            .navbar > div:last-child > a { display: none; }
+            .navbar > div:last-child > a[title="Notifications"] { display: block; margin-right: 0 !important; }
+            .bottom-nav { display: flex; }
+            .main-container { padding: 0 1rem; padding-bottom: 80px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fa-brands fa-paypal"></i>
+            <span>
+                <span style="color: white; font-style: italic;">Pay</span><span style="color: #009cde; font-style: italic;">Transfer</span>
+            </span>
+        </div>
+        <div class="hamburger" onclick="toggleMenu()">
+            <i class="fa-solid fa-bars"></i>
+        </div>
+        <div class="nav-links">
+            <a href="Untitled-1.html"><i class="fa-solid fa-paper-plane"></i> Send</a>
+            <a href="wallet.html"><i class="fa-solid fa-wallet"></i> Wallet</a>
+            <a href="#" class="active"><i class="fa-solid fa-clock-rotate-left"></i> Activity</a>
+        </div>
+        <div style="display: flex; align-items: center;">
+            <a href="#" style="color: white; margin-right: 20px; position: relative;" title="Notifications">
+                <i class="fa-solid fa-bell" style="font-size: 1.1rem;"></i>
+                <span class="notification-badge">3</span>
+            </a>
+            <a href="settings.html" style="color: white; margin-right: 20px;" title="Settings">
+                <i class="fa-solid fa-gear" style="font-size: 1.1rem;"></i>
+            </a>
+            <a href="#" style="color: white; margin-right: 20px;" title="Help">
+                <i class="fa-solid fa-circle-question" style="font-size: 1.1rem;"></i>
+            </a>
+            <a href="#" style="color: white; text-decoration: none; font-size: 0.85rem; font-weight: bold; letter-spacing: 0.5px;">LOG OUT</a>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="search-section">
+            <div class="search-wrapper">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" class="search-input" placeholder="Search by name or amount">
+            </div>
+            <button class="filter-btn" title="Download Statement">
+                <i class="fa-solid fa-download"></i>
+            </button>
+            <button class="filter-btn" title="Filter">
+                <i class="fa-solid fa-sliders"></i>
+            </button>
+        </div>
+
+        <div class="date-header">December 22, 2025</div>
+        <div class="activity-card">
+            <div class="transaction-item">
+                <div class="t-icon"><i class="fa-brands fa-spotify" style="color: #1DB954;"></i></div>
+                <div class="t-details">
+                    <div class="t-name">Spotify AB</div>
+                    <div class="t-status">Automatic Payment</div>
+                </div>
+                <div class="t-amount amount-minus">- $9.99</div>
+            </div>
+            <div class="transaction-item">
+                <div class="t-icon"><i class="fa-solid fa-user" style="color: #0070ba;"></i></div>
+                <div class="t-details">
+                    <div class="t-name">Sarah Connor</div>
+                    <div class="t-status">Money Received</div>
+                </div>
+                <div class="t-amount amount-plus">+ $450.00</div>
+            </div>
+        </div>
+
+        <div class="date-header">December 21, 2025</div>
+        <div class="activity-card">
+            <div class="transaction-item">
+                <div class="t-icon"><i class="fa-brands fa-uber"></i></div>
+                <div class="t-details">
+                    <div class="t-name">Uber Technologies</div>
+                    <div class="t-status">Ride</div>
+                </div>
+                <div class="t-amount amount-minus">- $24.50</div>
+            </div>
+        </div>
+
+        <div class="date-header">November 2025</div>
+        <div class="activity-card">
+            <div class="transaction-item">
+                <div class="t-icon"><i class="fa-solid fa-building-columns" style="color: #555;"></i></div>
+                <div class="t-details">
+                    <div class="t-name">Transfer to Bank</div>
+                    <div class="t-status">Completed</div>
+                </div>
+                <div class="t-amount amount-minus">- $2,000.00</div>
+            </div>
+            <div class="transaction-item">
+                <div class="t-icon"><i class="fa-solid fa-briefcase" style="color: #e67e22;"></i></div>
+                <div class="t-details">
+                    <div class="t-name">Upwork Escrow Inc.</div>
+                    <div class="t-status">Payment Received</div>
+                </div>
+                <div class="t-amount amount-plus">+ $1,250.00</div>
+            </div>
+            <div class="transaction-item">
+                <div class="t-icon"><i class="fa-brands fa-amazon" style="color: #ff9900;"></i></div>
+                <div class="t-details">
+                    <div class="t-name">Amazon Marketplace</div>
+                    <div class="t-status">Purchase</div>
+                </div>
+                <div class="t-amount amount-minus">- $89.99</div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 2rem; margin-bottom: 2rem;">
+            <a href="#" style="color: var(--primary-color); text-decoration: none; font-weight: 600;">Show more</a>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="wallet.html" class="bottom-nav-item">
+            <i class="fa-solid fa-wallet"></i>
+            <span>Wallet</span>
+        </a>
+        <a href="Untitled-1.html" class="bottom-nav-item">
+            <i class="fa-solid fa-paper-plane"></i>
+            <span>Send</span>
+        </a>
+        <a href="activity.html" class="bottom-nav-item active">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>Activity</span>
+        </a>
+        <a href="settings.html" class="bottom-nav-item">
+            <i class="fa-solid fa-gear"></i>
+            <span>Settings</span>
+        </a>
+    </nav>
+
+    <script>
+        function toggleMenu() {
+            document.querySelector('.navbar').classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

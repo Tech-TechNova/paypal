@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Money | PayTransfer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #0070ba;
+            --dark-blue: #003087;
+            --bg-color: #eff2f5;
+            --text-color: #2c2e2f;
+            --border-color: #eef2f5;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: var(--dark-blue);
+            color: white;
+            padding: 0 3rem;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-weight: bold;
+            font-size: 1.6rem;
+            font-family: sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: white;
+            font-weight: bold;
+        }
+
+        .hamburger {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -6px;
+            right: -8px;
+            background-color: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            font-size: 0.65rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--dark-blue);
+        }
+
+        /* Main Content */
+        .main-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 3rem;
+        }
+
+        .transfer-card {
+            background: white;
+            width: 100%;
+            max-width: 480px;
+            padding: 3rem;
+            border-radius: 28px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            border: none;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #e1f0fa 0%, #ffffff 100%);
+            color: var(--dark-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+            border: none;
+        }
+
+        .header h2 {
+            font-size: 1.4rem;
+            color: var(--text-color);
+        }
+
+        .balance-display {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            padding: 0;
+            background: transparent;
+            border: none;
+        }
+        
+        .balance-label {
+            font-size: 1rem;
+            color: #5e6c79;
+            margin-bottom: 0.5rem;
+        }
+        
+        .balance-amount {
+            font-size: 3rem;
+            font-weight: 500;
+            color: var(--text-color);
+            letter-spacing: -1px;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            color: #2c2e2f;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 18px 20px;
+            border: 2px solid transparent;
+            border-radius: 16px;
+            font-size: 1rem;
+            transition: all 0.2s;
+            background-color: #f7f9fc;
+            font-weight: 500;
+        }
+
+        .form-control:focus {
+            outline: none;
+            background-color: white;
+            border-color: #0070ba;
+            box-shadow: 0 10px 30px rgba(0, 112, 186, 0.1);
+        }
+        
+        .currency-symbol {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c7378;
+            font-weight: bold;
+        }
+        
+        .with-symbol {
+            padding-left: 35px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #0070ba 0%, #005ea6 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 112, 186, 0.3);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(0, 112, 186, 0.4);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            font-size: 0.8rem;
+            color: #6c7378;
+            background-color: transparent;
+        }
+        
+        .footer a {
+            color: #6c7378;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Bottom Navigation for Mobile */
+        .bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: white;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            justify-content: space-around;
+            padding: 12px 0;
+            z-index: 1000;
+            border-top: 1px solid #eee;
+        }
+
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #6c7378;
+            font-size: 0.7rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .bottom-nav-item i {
+            font-size: 1.4rem;
+            margin-bottom: 4px;
+        }
+
+        .bottom-nav-item.active {
+            color: var(--primary-color);
+        }
+
+        /* تحسينات للموبايل */
+        @media (max-width: 768px) {
+            .transfer-card {
+                box-shadow: none;
+                border: none;
+                background: transparent;
+                padding: 1rem;
+            }
+            .navbar { padding: 0 1.5rem; height: 60px; }
+            .hamburger { display: none !important; }
+            .nav-links { display: none !important; }
+            .navbar > div:last-child > a { display: none; }
+            .navbar > div:last-child > a[title="Notifications"] { display: block; margin-right: 0 !important; }
+            .bottom-nav { display: flex; }
+            .main-container { padding-bottom: 80px; }
+            .footer { padding-bottom: 90px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fa-brands fa-paypal"></i>
+            <span>
+                <span style="color: white; font-style: italic;">Pay</span><span style="color: #009cde; font-style: italic;">Transfer</span>
+            </span>
+        </div>
+        <div class="hamburger" onclick="toggleMenu()">
+            <i class="fa-solid fa-bars"></i>
+        </div>
+        <div class="nav-links">
+            <a href="#" class="active"><i class="fa-solid fa-paper-plane"></i> Send</a>
+            <a href="wallet.html"><i class="fa-solid fa-wallet"></i> Wallet</a>
+            <a href="activity.html"><i class="fa-solid fa-clock-rotate-left"></i> Activity</a>
+        </div>
+        <div style="display: flex; align-items: center;">
+            <a href="#" style="color: white; margin-right: 20px; position: relative;" title="Notifications">
+                <i class="fa-solid fa-bell" style="font-size: 1.1rem;"></i>
+                <span class="notification-badge">3</span>
+            </a>
+            <a href="settings.html" style="color: white; margin-right: 20px;" title="Settings">
+                <i class="fa-solid fa-gear" style="font-size: 1.1rem;"></i>
+            </a>
+            <a href="#" style="color: white; margin-right: 20px;" title="Help">
+                <i class="fa-solid fa-circle-question" style="font-size: 1.1rem;"></i>
+            </a>
+            <a href="#" style="color: white; text-decoration: none; font-size: 0.85rem; font-weight: bold; letter-spacing: 0.5px;">LOG OUT</a>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="transfer-card">
+            <div class="header">
+                <div class="user-avatar">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <h2>Send Money</h2>
+            </div>
+
+            <div class="balance-display">
+                <div class="balance-label">Available PayTransfer balance</div>
+                <div class="balance-amount"><span style="font-size: 0.6em; vertical-align: top;">$</span>55,000.00 <span style="font-size: 0.4em; color: #6c7378; font-weight: 400; vertical-align: middle;">USD</span></div>
+            </div>
+
+            <form action="#" method="POST">
+                <div class="input-group">
+                    <label for="recipient">Send to</label>
+                    <input type="email" id="recipient" class="form-control" placeholder="Name, username, or email" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="amount">Amount</label>
+                    <div class="input-wrapper">
+                        <span class="currency-symbol">$</span>
+                        <input type="number" id="amount" class="form-control with-symbol" placeholder="0.00" step="0.01" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="note">What's this payment for?</label>
+                    <textarea id="note" class="form-control" rows="3" placeholder="Add a note (optional)"></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit">Continue</button>
+            </form>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div style="margin-bottom: 10px;">
+            <a href="#">Privacy</a>
+            <a href="#">Legal</a>
+            <a href="#">Contact Us</a>
+        </div>
+        <p>Copyright © 1999-2026 PayTransfer. All rights reserved.</p>
+    </footer>
+
+    <nav class="bottom-nav">
+        <a href="wallet.html" class="bottom-nav-item">
+            <i class="fa-solid fa-wallet"></i>
+            <span>Wallet</span>
+        </a>
+        <a href="Untitled-1.html" class="bottom-nav-item active">
+            <i class="fa-solid fa-paper-plane"></i>
+            <span>Send</span>
+        </a>
+        <a href="activity.html" class="bottom-nav-item">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>Activity</span>
+        </a>
+        <a href="settings.html" class="bottom-nav-item">
+            <i class="fa-solid fa-gear"></i>
+            <span>Settings</span>
+        </a>
+    </nav>
+
+    <script>
+        function toggleMenu() {
+            document.querySelector('.navbar').classList.toggle('active');
+        }
+
+        // استرجاع الرصيد المحفوظ عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedBalance = localStorage.getItem('walletBalance');
+            if (savedBalance) {
+                const balanceElement = document.querySelector('.balance-amount');
+                balanceElement.innerHTML = `<span style="font-size: 0.6em; vertical-align: top;">$</span>${parseFloat(savedBalance).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} <span style="font-size: 0.4em; color: #6c7378; font-weight: 400; vertical-align: middle;">USD</span>`;
+            }
+        });
+
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const amountInput = document.getElementById('amount');
+            const recipientInput = document.getElementById('recipient');
+            const amount = parseFloat(amountInput.value);
+            const balanceElement = document.querySelector('.balance-amount');
+            
+            // Get current balance from text (removing currency symbols and commas)
+            let currentBalance = parseFloat(balanceElement.innerText.replace(/[^0-9.-]+/g,""));
+            
+            if (amount > currentBalance) {
+                alert("Insufficient funds");
+                return;
+            }
+
+            currentBalance -= amount;
+
+            // تحديث الواجهة
+            balanceElement.innerHTML = `<span style="font-size: 0.6em; vertical-align: top;">$</span>${currentBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} <span style="font-size: 0.4em; color: #6c7378; font-weight: 400; vertical-align: middle;">USD</span>`;
+            
+            // حفظ الرصيد الجديد في LocalStorage
+            localStorage.setItem('walletBalance', currentBalance);
+
+            // حفظ تفاصيل المعاملة
+            const transaction = {
+                name: recipientInput.value,
+                amount: amount,
+                date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                type: 'sent'
+            };
+
+            // إضافة المعاملة للقائمة المحفوظة
+            const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+            transactions.unshift(transaction);
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+
+            alert("Transfer Successful!");
+            amountInput.value = '';
+            recipientInput.value = '';
+        });
+    </script>
+</body>
+</html>

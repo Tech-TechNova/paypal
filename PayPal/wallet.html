@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet | PayTransfer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #0070ba;
+            --dark-blue: #003087;
+            --bg-color: #eff2f5;
+            --text-color: #2c2e2f;
+            --card-bg: #ffffff;
+            --success-color: #27ae60;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: var(--dark-blue);
+            color: white;
+            padding: 0 3rem;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-weight: bold;
+            font-size: 1.6rem;
+            font-family: sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+            padding: 8px 12px;
+            border-radius: 20px;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: white;
+            background-color: rgba(255,255,255,0.1);
+            font-weight: bold;
+        }
+
+        .hamburger {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -6px;
+            right: -8px;
+            background-color: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            font-size: 0.65rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--dark-blue);
+        }
+
+        /* Layout */
+        .main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        /* Cards Styling */
+        .card-panel {
+            background: var(--card-bg);
+            border-radius: 28px;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+        }
+
+        /* Balance Section */
+        .balance-card {
+            background: linear-gradient(135deg, #003087 0%, #0070ba 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .balance-header {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .balance-amount {
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 2rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .action-btn {
+            background: rgba(255,255,255,0.15);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(10px);
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .action-btn:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-2px);
+        }
+
+        /* Activity List */
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 1.2rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #f7f9fc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.2rem;
+            color: var(--dark-blue);
+        }
+
+        .activity-details {
+            flex: 1;
+        }
+
+        .activity-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .activity-date {
+            font-size: 0.85rem;
+            color: #6c7378;
+        }
+
+        .activity-amount {
+            font-weight: 700;
+        }
+
+        .amount-positive { color: var(--success-color); }
+        .amount-negative { color: var(--text-color); }
+
+        /* Sidebar Cards */
+        .bank-card-visual {
+            background: linear-gradient(135deg, #1e1e1e 0%, #3a3a3a 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 20px;
+            margin-bottom: 1rem;
+            position: relative;
+            height: 160px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+
+        .card-chip {
+            width: 40px;
+            height: 30px;
+            background: linear-gradient(135deg, #e0e0e0 0%, #a0a0a0 100%);
+            border-radius: 6px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            font-size: 0.8rem;
+            color: #6c7378;
+            background-color: transparent;
+            margin-top: auto;
+        }
+        
+        .footer a {
+            color: #6c7378;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Bottom Navigation for Mobile */
+        .bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: white;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            justify-content: space-around;
+            padding: 12px 0;
+            z-index: 1000;
+            border-top: 1px solid #eee;
+        }
+
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #6c7378;
+            font-size: 0.7rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .bottom-nav-item i {
+            font-size: 1.4rem;
+            margin-bottom: 4px;
+        }
+
+        .bottom-nav-item.active {
+            color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .main-container { grid-template-columns: 1fr; padding: 1rem; }
+            .navbar { padding: 0 1.5rem; height: 60px; }
+            .hamburger { display: none !important; }
+            .nav-links { display: none !important; }
+            .navbar > div:last-child > a { display: none; }
+            .navbar > div:last-child > a[title="Notifications"] { display: block; margin-right: 0 !important; }
+            .bottom-nav { display: flex; }
+            .main-container { padding-bottom: 80px; }
+            .footer { padding-bottom: 90px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fa-brands fa-paypal"></i>
+            <span>
+                <span style="color: white; font-style: italic;">Pay</span><span style="color: #009cde; font-style: italic;">Transfer</span>
+            </span>
+        </div>
+        <div class="hamburger" onclick="toggleMenu()">
+            <i class="fa-solid fa-bars"></i>
+        </div>
+        <div class="nav-links">
+            <a href="Untitled-1.html"><i class="fa-solid fa-paper-plane"></i> Send</a>
+            <a href="#" class="active"><i class="fa-solid fa-wallet"></i> Wallet</a>
+            <a href="activity.html"><i class="fa-solid fa-clock-rotate-left"></i> Activity</a>
+        </div>
+        <div style="display: flex; align-items: center;">
+            <a href="#" style="color: white; margin-right: 20px; position: relative;" title="Notifications">
+                <i class="fa-solid fa-bell" style="font-size: 1.1rem;"></i>
+                <span class="notification-badge">3</span>
+            </a>
+            <a href="settings.html" style="color: white; margin-right: 20px;" title="Settings">
+                <i class="fa-solid fa-gear" style="font-size: 1.1rem;"></i>
+            </a>
+            <a href="#" style="color: white; margin-right: 20px;" title="Help">
+                <i class="fa-solid fa-circle-question" style="font-size: 1.1rem;"></i>
+            </a>
+            <a href="#" style="color: white; text-decoration: none; font-size: 0.85rem; font-weight: bold; letter-spacing: 0.5px;">LOG OUT</a>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <!-- Left Column -->
+        <div class="left-column">
+            <div class="card-panel balance-card">
+                <div class="balance-header">Total Balance</div>
+                <div class="balance-amount">$55,000.00</div>
+                <div class="action-buttons">
+                    <button class="action-btn"><i class="fa-solid fa-arrow-up"></i> Transfer Funds</button>
+                    <button class="action-btn"><i class="fa-solid fa-plus"></i> Add Money</button>
+                </div>
+            </div>
+
+            <div class="card-panel">
+                <div class="section-title">
+                    <span>Recent Activity</span>
+                    <a href="#" style="font-size: 0.9rem; color: var(--primary-color); text-decoration: none;">View all</a>
+                </div>
+                
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-icon"><i class="fa-solid fa-user"></i></div>
+                        <div class="activity-details">
+                            <div class="activity-name">Michael Smith</div>
+                            <div class="activity-date">Money sent • Jan 1</div>
+                        </div>
+                        <div class="activity-amount amount-negative">- $5,500.00</div>
+                    </div>
+
+                    <div class="activity-item">
+                        <div class="activity-icon"><i class="fa-brands fa-ebay"></i></div>
+                        <div class="activity-details">
+                            <div class="activity-name">eBay Inc.</div>
+                            <div class="activity-date">Payment received • Dec 22</div>
+                        </div>
+                        <div class="activity-amount amount-positive">+ $2,500.00</div>
+                    </div>
+
+                    <div class="activity-item">
+                        <div class="activity-icon"><i class="fa-solid fa-user"></i></div>
+                        <div class="activity-details">
+                            <div class="activity-name">Ahmed Ali</div>
+                            <div class="activity-date">Money sent • Dec 21</div>
+                        </div>
+                        <div class="activity-amount amount-negative">- $200.00</div>
+                    </div>
+
+                    <div class="activity-item">
+                        <div class="activity-icon"><i class="fa-solid fa-coffee"></i></div>
+                        <div class="activity-details">
+                            <div class="activity-name">Starbucks Coffee</div>
+                            <div class="activity-date">Automatic payment • Nov 28</div>
+                        </div>
+                        <div class="activity-amount amount-negative">- $5.50</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="right-column">
+            <div class="card-panel">
+                <div class="section-title">
+                    <span>Banks & Cards</span>
+                    <i class="fa-solid fa-plus" style="cursor: pointer;"></i>
+                </div>
+
+                <div class="bank-card-visual">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div class="card-chip"></div>
+                        <i class="fa-brands fa-cc-visa" style="font-size: 2rem; opacity: 0.8;"></i>
+                    </div>
+                    <div>
+                        <div style="font-size: 1.2rem; letter-spacing: 2px; margin-bottom: 5px;">•••• •••• •••• 4242</div>
+                        <div style="font-size: 0.8rem; opacity: 0.7;">Debit Card</div>
+                    </div>
+                </div>
+
+                <div class="bank-card-visual" style="background: linear-gradient(135deg, #005ea6 0%, #003087 100%);">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <i class="fa-solid fa-building-columns" style="font-size: 1.5rem;"></i>
+                        <span style="font-weight: bold;">CHASE</span>
+                    </div>
+                    <div>
+                        <div style="font-size: 1rem; margin-bottom: 5px;">Chase Checking</div>
+                        <div style="font-size: 0.8rem; opacity: 0.7;">•••• 9889</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div style="margin-bottom: 10px;">
+            <a href="#">Privacy</a>
+            <a href="#">Legal</a>
+            <a href="#">Contact Us</a>
+        </div>
+        <p>Copyright © 1999-2026 PayTransfer. All rights reserved.</p>
+    </footer>
+
+    <nav class="bottom-nav">
+        <a href="wallet.html" class="bottom-nav-item active">
+            <i class="fa-solid fa-wallet"></i>
+            <span>Wallet</span>
+        </a>
+        <a href="Untitled-1.html" class="bottom-nav-item">
+            <i class="fa-solid fa-paper-plane"></i>
+            <span>Send</span>
+        </a>
+        <a href="activity.html" class="bottom-nav-item">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>Activity</span>
+        </a>
+        <a href="settings.html" class="bottom-nav-item">
+            <i class="fa-solid fa-gear"></i>
+            <span>Settings</span>
+        </a>
+    </nav>
+
+    <script>
+        function toggleMenu() {
+            document.querySelector('.navbar').classList.toggle('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // تحديث الرصيد من الذاكرة
+            const savedBalance = localStorage.getItem('walletBalance');
+            if (savedBalance) {
+                document.querySelector('.balance-amount').innerText = `$${parseFloat(savedBalance).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            }
+
+            // عرض المعاملات الجديدة
+            const savedTransactions = localStorage.getItem('transactions');
+            if (savedTransactions) {
+                const transactions = JSON.parse(savedTransactions);
+                const activityList = document.querySelector('.activity-list');
+                
+                transactions.forEach(t => {
+                    const itemHtml = `
+                    <div class="activity-item">
+                        <div class="activity-icon"><i class="fa-solid fa-user"></i></div>
+                        <div class="activity-details">
+                            <div class="activity-name">${t.name}</div>
+                            <div class="activity-date">Money sent • ${t.date}</div>
+                        </div>
+                        <div class="activity-amount amount-negative">- $${parseFloat(t.amount).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+                    </div>`;
+                    activityList.insertAdjacentHTML('afterbegin', itemHtml);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
